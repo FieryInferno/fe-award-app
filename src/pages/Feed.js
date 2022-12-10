@@ -3,6 +3,7 @@ import list from '../assets/list.svg';
 import filter from '../assets/filter.svg';
 import empty from '../assets/empty.svg';
 import useAwards from '../hooks/useAwards';
+import {LazyLoadImage} from 'react-lazy-load-image-component';
 
 /* eslint-disable max-len */
 const awardType = {
@@ -62,8 +63,8 @@ const Feed = () => {
         </div>
       </header>
       <main>
-        <div className="container">
-          <article className="grid grid-cols-1 gap-4">
+        <div>
+          <article className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {loading &&
               <div className="flex space-x-2 justify-center">
                 <div aria-label="Loading..." role="status" className="flex items-center space-x-2">
@@ -110,13 +111,22 @@ const Feed = () => {
               </div>
             }
 
-            {rows.length !== 0 ? rows.map(({type, point, name}, key) =>
+            {rows.length !== 0 ? rows.map(({type, point, name, image}, key) =>
               <div key={key}>
-                <div className="border-2 border-neutral-800 rounded-lg bg-neutral-400 h-32 p-2 mx-4">
+                <div className="border-2 border-neutral-800 rounded-lg bg-neutral-400 h-fit p-2 mx-4">
                   <div>
                     <span className={awardType[type]}>{type}</span>
                   </div>
-                  <div className="mt-20 font-bold">
+                  <div>
+                    <LazyLoadImage
+                      height={384}
+                      src={`http://localhost:5000/${image}`}
+                      width={384}
+                      alt="Image Alt"
+                    />
+                    {/* <img src={`http://localhost:5000/${image}`} className="w-96" /> */}
+                  </div>
+                  <div className="font-bold">
                     {point} Poin
                   </div>
                 </div>
