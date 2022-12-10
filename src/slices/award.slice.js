@@ -17,7 +17,12 @@ export const get = createAsyncThunk(
 
 const awardSlice = createSlice({
   name: 'award',
-  initialState: {loading: false},
+  initialState: {
+    loading: false,
+    awards: {
+      rows: [],
+    },
+  },
   extraReducers: {
     [get.pending]: (state) => {
       state.loading = true;

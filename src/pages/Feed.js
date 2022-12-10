@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import list from '../assets/list.svg';
 import filter from '../assets/filter.svg';
 import empty from '../assets/empty.svg';
@@ -13,13 +13,38 @@ const awardType = {
 
 const Feed = () => {
   const {loading, awards, getAwards} = useAwards();
+  const {page, rows, total, limit} = awards;
+  const [param, setParam] = useState(0);
+
+  const pagination = useMemo(() => {
+    const pagination = [];
+    const end = page <= 2 ? 4 : page + 2;
+
+    for (let index = page <= 2 ? 0 : page - 2; index < Math.ceil(total / limit); index++) {
+      if (index > end) {
+        break;
+      }
+
+      pagination.push(
+        page === index ?
+          <li key={index}>
+            <button aria-current="page" className="px-3 py-2 leading-tight text-black border border-neutral-800 bg-blue-500 hover:bg-blue-100 hover:text-blue-700">{index + 1}</button>
+          </li> :
+          <li key={index}>
+            <button className="px-3 py-2 leading-tight text-black bg-neutral-400 border border-neutral-800 hover:bg-gray-100 hover:text-gray-700" onClick={() => setParam(index)}>{index + 1}</button>
+          </li>,
+      );
+    };
+
+    return pagination;
+  }, [page]);
 
   useEffect(() => {
     getAwards({
       limit: 6,
-      page: 0,
+      page: param,
     });
-  }, []);
+  }, [param]);
 
   return (
     <>
@@ -85,7 +110,7 @@ const Feed = () => {
               </div>
             }
 
-            {awards?.rows.length !== 0 ? awards?.rows.map(({type, point, name}, key) =>
+            {rows.length !== 0 ? rows.map(({type, point, name}, key) =>
               <div key={key}>
                 <div className="border-2 border-neutral-800 rounded-lg bg-neutral-400 h-32 p-2 mx-4">
                   <div>
@@ -110,30 +135,16 @@ const Feed = () => {
               </div>
             }
           </article>
-          {awards?.rows.length !== 0 &&
+          {rows.length !== 0 &&
             <article className="mt-4 text-center">
               <nav aria-label="Page navigation example">
                 <ul className="inline-flex -space-x-px">
                   <li>
-                    <a href="#" className="px-3 py-2 ml-0 leading-tight text-black bg-neutral-400 border border-neutral-800 rounded-l-lg hover:bg-gray-100 hover:text-gray-700">Previous</a>
+                    <button className="px-3 py-2 ml-0 leading-tight text-black bg-neutral-400 border border-neutral-800 rounded-l-lg hover:bg-gray-100 hover:text-gray-700" disabled={page === 0} onClick={() => setParam(param - 1)}>Previous</button>
                   </li>
+                  {pagination}
                   <li>
-                    <a href="#" className="px-3 py-2 leading-tight text-black bg-neutral-400 border border-neutral-800 hover:bg-gray-100 hover:text-gray-700">1</a>
-                  </li>
-                  <li>
-                    <a href="#" className="px-3 py-2 leading-tight text-black bg-neutral-400 border border-neutral-800 hover:bg-gray-100 hover:text-gray-700">2</a>
-                  </li>
-                  <li>
-                    <a href="#" aria-current="page" className="px-3 py-2 text-bluneutral-400 border border-neutral-800 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">3</a>
-                  </li>
-                  <li>
-                    <a href="#" className="px-3 py-2 leading-tight text-black bg-neutral-400 border border-neutral-800 hover:bg-gray-100 hover:text-gray-700">4</a>
-                  </li>
-                  <li>
-                    <a href="#" className="px-3 py-2 leading-tight text-black bg-neutral-400 border border-neutral-800 hover:bg-gray-100 hover:text-gray-700">5</a>
-                  </li>
-                  <li>
-                    <a href="#" className="px-3 py-2 leading-tight text-black bg-neutral-400 border border-neutral-800 rounded-r-lg hover:bg-gray-100 hover:text-gray-700">Next</a>
+                    <button className="px-3 py-2 leading-tight text-black bg-neutral-400 border border-neutral-800 rounded-r-lg hover:bg-gray-100 hover:text-gray-700" onClick={() => setParam(param + 1)} disabled={Math.ceil(total / limit) === page + 1}>Next</button>
                   </li>
                 </ul>
               </nav>
