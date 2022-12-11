@@ -28,8 +28,10 @@ const Feed = () => {
   const dispatch = useDispatch();
   const [filterParam, setFilterParam] = useState({
     type: [],
-    poin: '1000',
+    poin: '10000',
   });
+
+  console.log(filterParam.poin);
 
   const pagination = useMemo(() => {
     const pagination = [];
@@ -89,7 +91,7 @@ const Feed = () => {
     getAwards({
       limit: 6,
       page: param,
-      poin: poin === '1000' ? undefined : poin,
+      poin: poin === '10000' ? undefined : poin,
       type,
     });
   }, [param]);
@@ -174,12 +176,12 @@ const Feed = () => {
                     </div>
                   </div>
                   <div className="px-4">
-                    {filterParam.poin !== '1000' &&
+                    {filterParam.poin !== '10000' &&
                       <span className="inline-flex items-center py-1 px-2 mr-2 text-sm font-medium rounded border-2 border-blue-400 text-blue-800">
                         Poin: 10000 - {filterParam.poin}
                         <button type="button" className="inline-flex items-center p-0.5 ml-2 text-sm text-blue-400 bg-transparent rounded-sm hover:bg-blue-200 hover:text-blue-900" onClick={() => setFilterParam({
                           ...filterParam,
-                          poin: null,
+                          poin: '10000',
                         })}>
                           <svg aria-hidden="true" className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd"></path></svg>
                           <span className="sr-only">Remove badge</span>
@@ -200,8 +202,11 @@ const Feed = () => {
                       </span>
                     }
 
-                    {(filterParam.poin !== '1000' || filterParam.type.length > 0) &&
-                      <span className="inline-flex items-center py-1 px-2 mr-2 text-sm font-medium rounded border-2 border-blue-400 text-blue-800 mt-1 cursor-pointer" onClick={() => setFilterParam({type: []})}>
+                    {(filterParam.poin !== '10000' || filterParam.type.length > 0) &&
+                      <span className="inline-flex items-center py-1 px-2 mr-2 text-sm font-medium rounded border-2 border-blue-400 text-blue-800 mt-1 cursor-pointer" onClick={() => setFilterParam({
+                        type: [],
+                        poin: '10000',
+                      })}>
                         Clear All Filters
                       </span>
                     }
