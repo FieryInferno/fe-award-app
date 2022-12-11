@@ -26,9 +26,10 @@ const Feed = () => {
   const [param, setParam] = useState(0);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [filterParam, setFilterParam] = useState({type: []});
-
-  console.log(filterParam);
+  const [filterParam, setFilterParam] = useState({
+    type: [],
+    poin: '1000',
+  });
 
   const pagination = useMemo(() => {
     const pagination = [];
@@ -51,7 +52,7 @@ const Feed = () => {
     };
 
     return pagination;
-  }, [page]);
+  }, [page, rows, total, limit]);
 
   const [state, setState] = useState(false);
 
@@ -84,9 +85,12 @@ const Feed = () => {
   };
 
   useEffect(() => {
+    const {poin, type} = filterParam;
     getAwards({
       limit: 6,
       page: param,
+      poin: poin === '1000' ? undefined : poin,
+      type,
     });
   }, [param]);
 
@@ -166,11 +170,11 @@ const Feed = () => {
                   <div>
                     <div className="flex justify-between p-4">
                       <div className="font-bold text-xl">Filter</div>
-                      <div className="w-4"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M310.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L160 210.7 54.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L114.7 256 9.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 301.3 265.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L205.3 256 310.6 150.6z"/></svg></div>
+                      <div className="w-4 cursor-pointer" onClick={() => setStateFilter(false)}><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M310.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L160 210.7 54.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L114.7 256 9.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 301.3 265.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L205.3 256 310.6 150.6z"/></svg></div>
                     </div>
                   </div>
                   <div className="px-4">
-                    {filterParam.poin &&
+                    {filterParam.poin !== '1000' &&
                       <span className="inline-flex items-center py-1 px-2 mr-2 text-sm font-medium rounded border-2 border-blue-400 text-blue-800">
                         Poin: 10000 - {filterParam.poin}
                         <button type="button" className="inline-flex items-center p-0.5 ml-2 text-sm text-blue-400 bg-transparent rounded-sm hover:bg-blue-200 hover:text-blue-900" onClick={() => setFilterParam({
@@ -196,7 +200,7 @@ const Feed = () => {
                       </span>
                     }
 
-                    {(filterParam.poin || filterParam.type.length > 0) &&
+                    {(filterParam.poin !== '1000' || filterParam.type.length > 0) &&
                       <span className="inline-flex items-center py-1 px-2 mr-2 text-sm font-medium rounded border-2 border-blue-400 text-blue-800 mt-1 cursor-pointer" onClick={() => setFilterParam({type: []})}>
                         Clear All Filters
                       </span>
