@@ -1,9 +1,17 @@
 import React, {useEffect, useMemo, useState} from 'react';
+import useAwards from '../hooks/useAwards';
+import {LazyLoadImage} from 'react-lazy-load-image-component';
+import {useNavigate} from 'react-router-dom';
+import {logout} from '../slices/auth.slice';
+import {useDispatch} from 'react-redux';
+
 import list from '../assets/list.svg';
 import filter from '../assets/filter.svg';
 import empty from '../assets/empty.svg';
-import useAwards from '../hooks/useAwards';
-import {LazyLoadImage} from 'react-lazy-load-image-component';
+import award from '../assets/award.svg';
+
+import Drawer from '@mui/material/Drawer';
+import Box from '@mui/material/Box';
 
 /* eslint-disable max-len */
 const awardType = {
@@ -16,6 +24,8 @@ const Feed = () => {
   const {loading, awards, getAwards} = useAwards();
   const {page, rows, total, limit} = awards;
   const [param, setParam] = useState(0);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const pagination = useMemo(() => {
     const pagination = [];
@@ -40,6 +50,17 @@ const Feed = () => {
     return pagination;
   }, [page]);
 
+  const [state, setState] = useState(false);
+
+  const toggleDrawer = (open) => (event) => {
+    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+      return;
+    }
+
+    setState(open);
+  };
+
+
   useEffect(() => {
     getAwards({
       limit: 6,
@@ -52,7 +73,58 @@ const Feed = () => {
       <header className="bg-white h-16 p-4">
         <div className="flex justify-between">
           <div>
-            <img src={list} className="w-4" />
+            <img src={list} className="w-4" onClick={(toggleDrawer(true))} style={{cursor: 'pointer'}} />
+            <Drawer
+              anchor={'left'}
+              open={state}
+              onClose={toggleDrawer(false)}
+            >
+              <Box
+                sx={{width: 250}}
+                role="presentation"
+              >
+                <div>
+                  <img className="mx-auto mt-8 w-48" src={award} alt="logo" />
+                </div>
+                <div className="text-center">
+                  <h1 className="text-2xl">
+                    <strong>Awards Menu</strong>
+                  </h1>
+                </div>
+                <div>
+                  <aside className="w-64" aria-label="Sidebar">
+                    <div className="overflow-y-auto py-4 px-3 bg-gray-50 rounded">
+                      <ul className="space-y-2">
+                        <li>
+                          <a href="#" className="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg hover:bg-gray-100" onClick={(e) => setState(false)}>
+                            <span className="ml-3">Home</span>
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#" className="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg hover:bg-gray-100">
+                            <span className="flex-1 ml-3 whitespace-nowrap">Cards</span>
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#" className="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg hover:bg-gray-100">
+                            <span className="flex-1 ml-3 whitespace-nowrap">Profile</span>
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#" className="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg hover:bg-gray-100" onClick={() => {
+                            dispatch(logout())
+                                .unwrap()
+                                .then(() => navigate('/login'));
+                          }}>
+                            <span className="flex-1 ml-3 whitespace-nowrap">Logout</span>
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                  </aside>
+                </div>
+              </Box>
+            </Drawer>
           </div>
           <div>
             <strong>Awards</strong>
@@ -124,7 +196,6 @@ const Feed = () => {
                       width={384}
                       alt="Image Alt"
                     />
-                    {/* <img src={`http://localhost:5000/${image}`} className="w-96" /> */}
                   </div>
                   <div className="font-bold">
                     {point} Poin

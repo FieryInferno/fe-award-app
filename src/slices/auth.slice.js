@@ -15,6 +15,13 @@ export const authenticate = createAsyncThunk(
     },
 );
 
+export const logout = createAsyncThunk(
+    'auth/logout',
+    async (data, {rejectWithValue}) => {
+      localStorage.removeItem('userSession');
+    },
+);
+
 const user = JSON.parse(localStorage.getItem('userSession'));
 
 const authSlice = createSlice({
@@ -35,6 +42,9 @@ const authSlice = createSlice({
     },
     [authenticate.rejected]: (state) => {
       state.loading = false;
+    },
+    [logout.fulfilled]: (state) => {
+      delete state.user;
     },
   },
 });
