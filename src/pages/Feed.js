@@ -31,8 +31,6 @@ const Feed = () => {
     poin: '10000',
   });
 
-  console.log(filterParam.poin);
-
   const pagination = useMemo(() => {
     const pagination = [];
     const end = page <= 2 ? 4 : page + 2;
