@@ -30,9 +30,7 @@ const Feed = () => {
       <main>
         <div>
           <FeedAwards loading={loading} rows={rows} />
-          {rows.length !== 0 &&
-            <PaginationRender setParam={setParam} />
-          }
+          {rows.length !== 0 && <PaginationRender setParam={setParam} />}
         </div>
       </main>
     </>
